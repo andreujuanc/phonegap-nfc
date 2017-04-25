@@ -27,7 +27,7 @@ var self = {
     proximityDeviceStatus: STATUS_NO_NFC_OR_NFC_DISABLED,
     listeningForNonNdefTags: false,
     tagEventTimeoutId: -1,
-    initializeProximityDevice: function() {
+    initializeProximityDevice: function () {
         if (self.proximityDevice) {
             // TODO Is there an API to tell if the user disabled NFC?
             try {
@@ -46,14 +46,22 @@ var self = {
 
         // TODO use these events to implement nfc.addTagDiscoveredListener
         if (self.proximityDevice) {
-            self.proximityDevice.ondevicearrived = function (eventArgs) {
-                console.log("NFC tag detected");
-                if (self.listeningForNonNdefTags) {
-                    // set a timeout so NDEF tags can cancel this event
-                    // we want one event to mimic the Android behavior
-                    self.tagEventTimeoutId = setTimeout(self.fireTagEvent, 100);
-                }
-            };
+            debugger;//YES
+            // self.proximityDevice.ondevicearrived = function (eventArgs) {
+            //     console.log("NFC tag detected");
+            //     if (self.listeningForNonNdefTags) {
+            //         // set a timeout so NDEF tags can cancel this event
+            //         // we want one event to mimic the Android behavior
+            //         self.tagEventTimeoutId = setTimeout(self.fireTagEvent, 100);
+            //     }
+            // };
+            debugger;
+            SmartCardReaderUtils.getFirstSmartCardReaderInfo(Windows.Devices.SmartCards.SmartCardReaderKind.nfc)
+                .then(function(deviceInfo){
+                    debugger;   
+
+                })
+
 
             self.proximityDevice.ondevicedeparted = function (eventArgs) {
                 console.log("NFC tag is gone");
@@ -111,11 +119,11 @@ var self = {
             failure(e.message);
         }
     },
-    addTagDiscoveredListener: function(success, failure, args) {
+    addTagDiscoveredListener: function (success, failure, args) {
         self.listeningForNonNdefTags = true;
         success();
     },
-    remoteTagDiscoveredListener: function(success, failure, args) {
+    remoteTagDiscoveredListener: function (success, failure, args) {
         self.listeningForNonNdefTags = false;
         success();
     },
@@ -141,10 +149,10 @@ var self = {
             self.publishedMessageId = self.proximityDevice.publishBinaryMessage("NDEF:WriteTag",
                 dataWriter.detachBuffer(),
                 function (sender, messageId) {
-                      console.log("Successfully wrote message to the NFC tag.");
-                      self.stopPublishing();
+                    console.log("Successfully wrote message to the NFC tag.");
+                    self.stopPublishing();
 
-                      success();
+                    success();
                 }
             );
 
@@ -153,7 +161,7 @@ var self = {
             failure(e.message);
         }
     },
-    shareTag: function(success, failure, args) {
+    shareTag: function (success, failure, args) {
 
         console.log("Share Tag");
 
@@ -186,7 +194,7 @@ var self = {
             failure(e.message);
         }
     },
-    unshareTag: function(success, failure, args) {
+    unshareTag: function (success, failure, args) {
         console.log("Unshare Tag");
 
         if (!self.initializeProximityDevice()) {
@@ -202,7 +210,7 @@ var self = {
             failure(e.message);
         }
     },
-    enabled: function(success, failure, args) {
+    enabled: function (success, failure, args) {
         self.initializeProximityDevice();
 
         if (self.initializeProximityDevice()) {
@@ -212,7 +220,7 @@ var self = {
         }
 
     },
-    showSettings: function(success, failure, args) {
+    showSettings: function (success, failure, args) {
 
         // WARNING: this isn't documented, so it might break
         var nfcSettingsUri = "ms-settings-proximity:";
@@ -228,7 +236,7 @@ var self = {
             }
         );
     },
-    stopPublishing: function() {
+    stopPublishing: function () {
         if (self.publishedMessageId !== -1) {
             self.proximityDevice.stopPublishingMessage(self.publishedMessageId);
             self.publishedMessageId = -1;
@@ -260,7 +268,7 @@ var self = {
         e.tag = tag;
         document.dispatchEvent(e);
     },
-    fireTagEvent: function() {
+    fireTagEvent: function () {
         var e = document.createEvent('Events');
         e.initEvent("tag", true, false);
         // unfortunately we don't have any tag metadata
