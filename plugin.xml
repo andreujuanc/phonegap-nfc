@@ -84,10 +84,7 @@
         <js-module src="src/windows/nfc-plugin.js" name="NfcPlugin">
             <merges target="" />
         </js-module>
-        <framework src="src/windows/pcsc/PCSCReader.csproj" 
-                        custom="true" 
-                        type="projectReference" 
-                        versions="10.*" />
+
 
     </platform>
 
